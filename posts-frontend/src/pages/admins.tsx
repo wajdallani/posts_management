@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAdmin, createAdmin, deleteAdmin } from "@/api/adminApi";
+import { getAdmin, createAdmin, deleteAdmin ,updateAdmin} from "@/api/adminApi";
 import { useState } from "react";
 
 // ✅ Define User Type
@@ -31,6 +31,7 @@ export default function UsersPage() {
     queryFn: getAdmin,
   });
 
+  
   // Create user mutation //POST
   const createUserMutation = useMutation({
     mutationFn: (user: User) => createAdmin(user), // ✅ Ensure it gets the correct type
@@ -44,6 +45,13 @@ export default function UsersPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }), //Refetches users to show updated data
   });
 
+  //update 
+  const updateUserMutation = useMutation({
+    mutationFn: ({ id, user }: { id: number; user: User }) => updateAdmin(id, user),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
+  });
+  
+
   if (isLoading) return <p>Loading users...</p>;
   if (error) return <p>Error fetching users</p>;
 
@@ -51,7 +59,7 @@ export default function UsersPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold">Users</h1>
 
-      {/* Add User Form */}
+      {/* Add/Update User Form */}
       <div className="mt-4">
         <input
           className="border p-2 mr-2"
@@ -75,35 +83,48 @@ export default function UsersPage() {
           onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
         />
         <select
-          name="role"
+          className="border p-2 mr-2"
           value={newUser.role}
-          onChange={(e) => setNewUser({ ...newUser, role: e.target.value as UserRole })} // ✅ Type assertion
+          onChange={(e) => setNewUser({ ...newUser, role: e.target.value as UserRole })}
         >
           <option value="ADMIN">Admin</option>
           <option value="POSTER">Poster</option>
         </select>
+
         <button
           className="bg-blue-500 text-white px-4 py-2"
-          onClick={() => createUserMutation.mutate(newUser)}
+          onClick={() => {
+            if (newUser.id) {
+              updateUserMutation.mutate({ id: newUser.id, user: newUser });
+            } else {
+              createUserMutation.mutate(newUser);
+            }
+            setNewUser({ id: undefined, name: "", email: "", password: "", role: "POSTER" });
+          }}
         >
-          Add User
+          {newUser.id ? "Update User" : "Add User"}
         </button>
       </div>
 
       {/* Users List */}
       <ul className="mt-4">
-        console.log("Users Data:", users);
-
         {users?.map((user) => (
-            
           <li key={user.id} className="flex justify-between border p-2">
             <span>{user.name} - {user.role}</span>
-            <button
-              className="bg-red-500 text-white px-2 py-1"
-              onClick={() => deleteUserMutation.mutate(user.id)}
-            >
-              Delete
-            </button>
+            <div>
+              <button
+                className="bg-yellow-500 text-white px-2 py-1 mr-2"
+                onClick={() => setNewUser(user)}
+              >
+                Edit
+              </button>
+              <button
+                className="bg-red-500 text-white px-2 py-1"
+                onClick={() => deleteUserMutation.mutate(user.id!)}
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>

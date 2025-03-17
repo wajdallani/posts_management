@@ -8,7 +8,17 @@ export const getAdmin = async () => {
 
   return response.data;
 };
+// Fetch admin by ID (GET)
+export const getAdminById = async (id : number) => {
+  const response = await axios.get(`${API_URL}/admins/${id}`);
 
+  return response.data;
+};
+
+// export async function getAdminById(id: number): Promise<User> {
+//   const response = await axios.get(`${API_URL}/${id}`);
+//   return response.data;
+// }
 // Create a new Admin
 export const createAdmin = async (userData: {name: string;  email: string; password: string ;role: "ADMIN" | "POSTER"}) => {
   const response = await axios.post(`${API_URL}/admins`, userData);
@@ -17,7 +27,7 @@ export const createAdmin = async (userData: {name: string;  email: string; passw
 
 // Update a Admin
 export const updateAdmin = async (id: number, updatedData: {name?: string;  email?: string; password?: string ;role?: "ADMIN" | "POSTER"}) => {
-  const response = await axios.put(`${API_URL}/admins/${id}`, updatedData);
+  const response = await axios.patch(`${API_URL}/admins/${id}`, updatedData);
   return response.data;
 };
 
