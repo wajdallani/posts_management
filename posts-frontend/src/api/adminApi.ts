@@ -15,10 +15,7 @@ export const getAdminById = async (id : number) => {
   return response.data;
 };
 
-// export async function getAdminById(id: number): Promise<User> {
-//   const response = await axios.get(`${API_URL}/${id}`);
-//   return response.data;
-// }
+
 // Create a new Admin
 export const createAdmin = async (userData: {name: string;  email: string; password: string ;role: "ADMIN" | "POSTER"}) => {
   const response = await axios.post(`${API_URL}/admins`, userData);
