@@ -21,9 +21,22 @@ model Admin{
   role Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  posts    Post[]  // Virtual field: does NOT create a new column
+
 }  
 
 enum Role{ 
   POSTER
   ADMIN
+}
+model Post {
+  id      Int    @id @default(autoincrement())
+  title   String
+  body    String
+  img     String?
+  adminId Int  // Foreign key column in the `posts` table
+  admin   Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) 
+  updatedAt DateTime @updatedAt
 }
