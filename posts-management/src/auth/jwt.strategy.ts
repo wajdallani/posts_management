@@ -8,11 +8,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private adminService: AdminsService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: "SECRET_KEY", 
+      secretOrKey: process.env.SECRET_KEY, 
     });
   }
 
   async validate(payload: any) {
-    return this.adminService.findByEmail(payload.email);
+    return this.adminService.findByEmail(payload.email);// Attach user to request
   }
 }

@@ -36,8 +36,7 @@ const getRoleFromToken = () => {
       if (role === "ADMIN") {
         router.push("/admins");
       } else if (role === "POSTER") {
-        alert("i'm a poster");
-        router.push("/poster-dashboard");
+        router.push("/posts");
       } else {
         router.push("/login"); // Or any other fallback path
       }
